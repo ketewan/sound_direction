@@ -1,6 +1,7 @@
 include(../global.pri)
 
 QT       += core multimedia
+QT       += widgets
 QT       -= gui
 
 TEMPLATE = app

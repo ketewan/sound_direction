@@ -82,19 +82,19 @@ void ControlFifo::readCommand()
         }
 
         if (paramName == "angleHistoryDepth") {
-            int historyDepth = convertParam<int>(paramName.toAscii().data(), param,
+            int historyDepth = convertParam<int>(paramName.toLatin1().data(), param,
                                                  "ControlFifo error. Cannot convert historyDepth to int."
                                                  "Command: " + qstr.toStdString());
             emit updateAngleDetectionHistoryDepth(historyDepth);
         }
         else if (paramName == "windowSize") {
-            quint64 windowSize = convertParam<quint64>(paramName.toAscii().data(), param,
+            quint64 windowSize = convertParam<quint64>(paramName.toLatin1().data(), param,
                                           "ControlFifo error. Cannot convert windowSize to size_t."
                                           "Command: " + qstr.toStdString());
             emit updateWindowSize(windowSize);
         }
         else if (paramName == "volume") {
-            double volume = convertParam<double>(paramName.toAscii().data(), param,
+            double volume = convertParam<double>(paramName.toLatin1().data(), param,
                                                  "ControlFifo error. Cannot convert volume to double."
                                                  "Command: " + qstr.toStdString());
             emit updateVolume(volume);

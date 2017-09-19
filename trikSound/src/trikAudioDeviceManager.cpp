@@ -39,7 +39,7 @@ TrikAudioDeviceManager::TrikAudioDeviceManager(const QAudioDeviceInfo& deviceInf
         for (auto& command: initCommands) {
             int res = QProcess::execute(command);
             if (res < 0) {
-                throw InitException((command + " - command failed").toAscii().data());
+                throw InitException((command + " - command failed").toLatin1().data());
             }
         }
 
@@ -58,6 +58,6 @@ void TrikAudioDeviceManager::setVolume(double vol)
     QString command = "amixer set PGA " + QString().setNum(static_cast<int>(vol * mMaxVolume));
     int res = QProcess::execute(command);
     if (res < 0) {
-        throw CommandException((command + " - command failed").toAscii().data());
+        throw CommandException((command + " - command failed").toLatin1().data());
     }
 }

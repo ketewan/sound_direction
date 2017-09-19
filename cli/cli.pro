@@ -17,6 +17,7 @@ include(../global.pri)
 
 QT       += core multimedia
 QT       += gui
+QT       += widgets
 
 CONFIG   += console
 CONFIG   -= app_bundle
