@@ -22,4 +22,5 @@ SUBDIRS += \
     benchmarks
 
 cli.depends = trikSound
-test.depends = trikSound
+tests.depends = trikSound
+benchmarks.depends = trikSound
