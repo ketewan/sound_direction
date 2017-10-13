@@ -40,7 +40,7 @@ protected:
 StereoRecordFilterFixture::StereoRecordFilterFixture():
     wavFile(make_shared<WavFile>("autotest.wav"))
 {
-    format.setChannels(1);
+    format.setChannelCount(1);
     format.setByteOrder(QAudioFormat::LittleEndian);
     format.setSampleRate(8000);
     format.setSampleType(QAudioFormat::SignedInt);

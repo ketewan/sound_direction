@@ -34,7 +34,7 @@ public:
 
     const char* what() const throw()
     {
-        return mMsg.toAscii().data();
+        return mMsg.toLatin1().data();
     }
 
 private:
