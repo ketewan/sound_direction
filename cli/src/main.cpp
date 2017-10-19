@@ -13,7 +13,6 @@
  * limitations under the License. */
 
 #include <QCoreApplication>
-#include <QApplication>
 #include <QTimer>
 #include <QDebug>
 
@@ -32,11 +31,11 @@ using trikSound::TrikSoundController;
 int main(int argc, char** argv)
 {
     try {
-        QApplication app(argc, argv);
+        QCoreApplication app(argc, argv);
 
         Settings settings = ArgumentParser::parse();
 
-        shared_ptr<ISettingsProvider> provider = make_shared<ControlFifo>();
+        shared_ptr<ISettingsProvider> provider;// = make_shared<ControlFifo>();
         shared_ptr<IAudioEventListener> eventListener = make_shared<OutputFifo>(settings.viewSettings());
 
         TrikSoundController* controller = new TrikSoundController(settings.controllerSettings(),

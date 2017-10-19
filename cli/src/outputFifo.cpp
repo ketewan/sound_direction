@@ -83,7 +83,7 @@ void OutputFifo::printEventData(const trikSound::AudioEvent& event)
             mOut << endl;
         }
     }
-
+    mOut.flush();
     mAngles.clear();
     mEnrg = 0;
     mFrameCnt = 0;

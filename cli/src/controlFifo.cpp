@@ -30,8 +30,8 @@ ControlFifo::ControlFifo():
   , mNotifier(fileno(mFile), QSocketNotifier::Read)
 {
     fill(mCmdBuffer, end(mCmdBuffer), 0);
-    connect(&mNotifier, SIGNAL(activated(int)), this, SLOT(readData()));
-    mNotifier.setEnabled(true);
+    //connect(&mNotifier, SIGNAL(activated(int)), this, SLOT(readData()), Qt::QueuedConnection);
+    //mNotifier.setEnabled(true);
 }
 
 void ControlFifo::processEvents()
