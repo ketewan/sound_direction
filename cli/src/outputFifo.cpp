@@ -19,15 +19,18 @@
 #include <cstdio>
 #include <cmath>
 #include <algorithm>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "trikSound/types.h"
 
 using namespace std;
 using trikSound::threshold_type;
 
-
 OutputFifo::OutputFifo(const ViewSettings& settings):
     mOut(stdout, QIODevice::WriteOnly)
+  , mWriteToFifo(settings.writeToFifo())
   , mShowAngle(settings.showAngle())
   , mShowVad(settings.showVadCoef())
   , mDiffTime(settings.diffTime())
@@ -42,15 +45,21 @@ OutputFifo::OutputFifo(const ViewSettings& settings):
     mOut.setRealNumberPrecision(12);
     mOut.setFieldWidth(4);
 
+    if (settings.writeToFifo()) {
+        //mkfifo(settings.fifoName().toStdString().c_str(), 0644);
+        //Open for read and write to use non blocking mode
+        auto fd_r = open(settings.fifoName().toStdString().c_str(), O_NONBLOCK | O_RDONLY);
+        auto fd_w = open(settings.fifoName().toStdString().c_str(), O_NONBLOCK | O_WRONLY);
+        if (fd_r < 0 || fd_w < 0)
+             printf("\n %s \n", strerror(errno));
+        mFileDescriptor = std::make_pair(fd_w, fd_r);
+    }
+
     mAngles.reserve(100);
 }
 
 void OutputFifo::recieve(const trikSound::AudioEvent& event)
 {
-    if ( (double) abs(event.timestamp() - mPrevTimestamp) / TO_MS_COEFF >= mDiffTime) {
-        printEventData(event);
-        mEventFlag = false;
-    }
     if (event.vadIsActiveSetFlag() && event.vadIsActive()) {
         saveEventData(event);
         if (!mEventFlag) {
@@ -58,32 +67,47 @@ void OutputFifo::recieve(const trikSound::AudioEvent& event)
             mPrevTimestamp = event.timestamp();
         }
     }
-    else {
-//        mOut << "----" << endl;
+    if ( (double) abs(event.timestamp() - mPrevTimestamp) / TO_MS_COEFF >= mDiffTime) {
+        printEventData(event);
+        mEventFlag = false;
     }
 }
 
 void OutputFifo::printEventData(const trikSound::AudioEvent& event)
 {
-    static QString delim = "  ";
-
     if (mShowAngle && !mAngles.empty()) {
         int med = mAngles.size() / 2;
         nth_element(mAngles.begin(), mAngles.begin() + med, mAngles.end());
         int angle = mAngles[med];
 
-        mOut << angle << delim;
-        mOut << endl;
+        if (!mWriteToFifo)
+            mOut << angle << endl;
+        else {
+            std::string buf = std::to_string(angle);
+            buf += "\n";
+            if ((write(mFileDescriptor.first, buf.c_str(), buf.length())) < 0) {
+                printf("\n %s \n", strerror(errno));
+            }
+        }
     }
 
     if (mShowVad) {
-        threshold_type thrsd = mEnrg / mFrameCnt;
-        if (thrsd > 0) {
-            mOut << thrsd << delim;
-            mOut << endl;
+        if (event.vadIsActive()) {
+            threshold_type thrsd = mEnrg / mFrameCnt;
+
+            if (!mWriteToFifo) {
+                mOut << thrsd << endl;
+            }
+            else {
+                std::string buf = std::to_string(thrsd);
+                buf += "\n";
+                if ((write(mFileDescriptor.first, buf.c_str(), buf.length())) < 0) {
+                    printf("\n %s \n", strerror(errno));
+                }
+            }
         }
     }
-    mOut.flush();
+
     mAngles.clear();
     mEnrg = 0;
     mFrameCnt = 0;

@@ -18,6 +18,7 @@ ViewSettings::ViewSettings():
     mShowAngle(false)
   , mShowVadCoef(false)
   , mDiffTime(0)
+  , mWriteToFifo(false)
 {}
 
 bool ViewSettings::showAngle() const
@@ -49,6 +50,25 @@ void ViewSettings::setDiffTime(int diffTime)
     mDiffTime = diffTime;
 }
 
+bool ViewSettings::writeToFifo() const
+{
+    return mWriteToFifo;
+}
+
+void ViewSettings::setWriteToFifo(bool writeToFifo)
+{
+    mWriteToFifo = writeToFifo;
+}
+
+QString ViewSettings::fifoName() const
+{
+    return mFifoName;
+}
+
+void ViewSettings::setFifoName(const QString& fifoName)
+{
+    mFifoName = fifoName;
+}
 
 Settings::Settings(const ControllerSettings& cSettings, const ViewSettings& vSettings):
     mControllerSettings(cSettings)

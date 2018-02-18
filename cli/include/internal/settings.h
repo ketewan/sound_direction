@@ -34,14 +34,21 @@ public:
     int diffTime() const;
     void setDiffTime(int diffTime);
 
+    bool writeToFifo() const;
+    void setWriteToFifo(bool writeToFifo);
+
+    QString fifoName() const;
+    void setFifoName(const QString& fifoName);
+
 private:
 
     bool mShowAngle;
     bool mShowVadCoef;
+    bool mWriteToFifo;
 
+    QString mFifoName;
     int mDiffTime;
 };
-
 
 class Settings
 {

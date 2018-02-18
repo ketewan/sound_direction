@@ -42,6 +42,7 @@ private:
 
     bool mShowAngle;
     bool mShowVad;
+    bool mWriteToFifo;
 
     clock_t mPrevTimestamp;
     bool mEventFlag;
@@ -50,4 +51,6 @@ private:
     double mEnrg;
 
     int mDiffTime;
+    QString mFifoName;
+    std::pair<int, int> mFileDescriptor;
 };

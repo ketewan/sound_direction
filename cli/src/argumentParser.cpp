@@ -48,6 +48,7 @@ std::unordered_map<const char*, ArgumentParser::Parameter> ArgumentParser::param
   , {"show", ArgumentParser::Parameter("-s", "--show", "Output formatting string is missing")}
 
   , {"diffTime", ArgumentParser::Parameter("", "--diff-time", "Diff time is missing")}
+  , {"fifo", ArgumentParser::Parameter("", "--fifo", "Pipe name is missing")}
 };
 
 std::unordered_map<const char*, char> ArgumentParser::showFormatting =
@@ -158,9 +159,19 @@ ViewSettings ArgumentParser::parseViewSettings(const QStringList& args)
             }
         }
         else if (*it == paramsMap["diffTime"]) {
-            checkArgsEnd(++it, args.end(), paramsMap["duration"].errorString());
+            checkArgsEnd(++it, args.end(), paramsMap["diffTime"].errorString());
             int diffTime = convertParam<int>("diffTime", *it, paramsMap["diffTime"].errorString());
             settings.setDiffTime(diffTime);
+        }
+        else if (*it == paramsMap["fifo"]) {
+            settings.setWriteToFifo(true);
+            if (++it != args.end()) {
+                settings.setFifoName(*it);
+            }
+            else {
+                throw ParseException(paramsMap["fifo"].errorString());
+            }
+
         }
     }
 

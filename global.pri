@@ -52,7 +52,9 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 
 LIBS += -L$$DESTDIR
 
-QMAKE_CXXFLAGS += -std=c++11 -g -Wall -Wextra
+QMAKE_CXXFLAGS += -std=c++11 -g -Wall -Wextra -fsanitize=float-divide-by-zero -fsanitize-recover=all
+QMAKE_LFLAGS += -fsanitize=float-divide-by-zero
+CONFIG += sanitizer sanitize_undefined
 
 GLOBAL_PWD = $$PWD
 
