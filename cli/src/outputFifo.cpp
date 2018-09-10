@@ -65,7 +65,7 @@ void OutputFifo::recieve(const trikSound::AudioEvent& event)
 
 void OutputFifo::printEventData(const trikSound::AudioEvent& event)
 {
-    static QString delim = "  ";
+    static QString delim = " ";
 
     if (mShowAngle && !mAngles.empty()) {
         int med = mAngles.size() / 2;
@@ -77,8 +77,10 @@ void OutputFifo::printEventData(const trikSound::AudioEvent& event)
 
     if (mShowVad) {
         threshold_type thrsd = mEnrg / mFrameCnt;
-        mOut << thrsd << delim;
+        if (thrsd > 0)
+          mOut << thrsd << delim;
     }
+
     mOut << endl;
 
     mAngles.clear();
