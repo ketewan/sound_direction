@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
         Settings settings = ArgumentParser::parse();
 
-        shared_ptr<ISettingsProvider> provider;// = make_shared<ControlFifo>();
+        shared_ptr<ISettingsProvider> provider = make_shared<ControlFifo>();
         shared_ptr<IAudioEventListener> eventListener = make_shared<OutputFifo>(settings.viewSettings());
 
         TrikSoundController* controller = new TrikSoundController(settings.controllerSettings(),
