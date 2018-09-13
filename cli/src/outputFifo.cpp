@@ -47,10 +47,6 @@ OutputFifo::OutputFifo(const ViewSettings& settings):
 
 void OutputFifo::recieve(const trikSound::AudioEvent& event)
 {
-    if ( (double) abs(event.timestamp() - mPrevTimestamp) / TO_MS_COEFF >= mDiffTime) {
-        printEventData(event);
-        mEventFlag = false;
-    }
     if (event.vadIsActiveSetFlag() && event.vadIsActive()) {
         saveEventData(event);
         if (!mEventFlag) {
@@ -58,8 +54,9 @@ void OutputFifo::recieve(const trikSound::AudioEvent& event)
             mPrevTimestamp = event.timestamp();
         }
     }
-    else {
-//        mOut << "----" << endl;
+    if ( (double) abs(event.timestamp() - mPrevTimestamp) / TO_MS_COEFF >= mDiffTime) {
+        printEventData(event);
+        mEventFlag = false;
     }
 }
 
