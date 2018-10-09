@@ -29,10 +29,10 @@ TRIKRUNTIME_SOURCES_PATH = /home/evgeniy/projects/trik/trikRuntime/trikRuntime
 TRIKRUNTIME_PATH = $$TRIKRUNTIME_SOURCES_PATH/bin/arm-release
 
 INCLUDEPATH += \
-            $$TRIKRUNTIME_SOURCES_PATH/trikControl/include/
+			$$TRIKRUNTIME_SOURCES_PATH/trikControl/include/
 
 #LIBS += -L$$TRIKRUNTIME_PATH -ltrikControl -ltrikKernel -lqslog
-QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
 
 SOURCES += \
     src/main.cpp \
