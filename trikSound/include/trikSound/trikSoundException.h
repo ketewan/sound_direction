@@ -34,7 +34,8 @@ public:
 
     const char* what() const throw()
     {
-        return mMsg.toLatin1().data();
+        static QByteArray text = mMsg.toLatin1();
+        return text.data();
     }
 
 private:
