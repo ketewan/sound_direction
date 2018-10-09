@@ -74,9 +74,7 @@ double VadFilterWrapper<Iter>::getEnergyCoefficient() const
     if (mMonoVad) {
         return mMonoVad->getEnergyCoefficient();
     }
-    else if (mStereoVad) {
-        return mStereoVad->getEnergyCoefficient();
-    }
+    return mStereoVad->getEnergyCoefficient();
 }
 
 template <typename Iter>
@@ -85,9 +83,7 @@ bool VadFilterWrapper<Iter>::isActive() const
     if (mMonoVad) {
         return mMonoVad->isActive();
     }
-    else if (mStereoVad) {
-        return mStereoVad->isActive();
-    }
+    return mStereoVad->isActive();
 }
 
 template <typename Iter>
@@ -96,9 +92,7 @@ typename VadFilterWrapper<Iter>::VadType VadFilterWrapper<Iter>::getType() const
     if (mMonoVad) {
         return VadType::MONO;
     }
-    else if (mStereoVad) {
-        return VadType::STEREO;
-    }
+    return VadType::STEREO;
 }
 
 template <typename Iter>
