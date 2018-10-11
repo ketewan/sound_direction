@@ -53,7 +53,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 LIBS += -L$$DESTDIR
 
 QMAKE_CXXFLAGS += -std=c++11 -g -Wall -Wextra -Werror -Wno-sign-compare -Wno-reorder -Wno-unused-parameter -Wno-unused-variable
-CONFIG += sanitizer sanitize_undefined sanitize_address
+#CONFIG += sanitizer sanitize_undefined sanitize_address
 #CONFIG += sanitizer sanitize_undefined sanitize_thread
 GLOBAL_PWD = $$PWD
 

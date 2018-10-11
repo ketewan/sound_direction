@@ -104,6 +104,8 @@ private:
     typedef std::shared_ptr<AudioDeviceManager>                         AudioDeviceManagerPtr;
     typedef std::shared_ptr<AudioStream>                                AudioStreamPtr;
 
+    typedef std::shared_ptr<QAudioFormat>                               QAudioFormatPtr;
+
     void handleSingleChannel();
     void handleDoubleChannel();
     void notify(const AudioEvent& event);
@@ -118,6 +120,10 @@ private:
     // circular buffer
 
     CircularBufferQAdapterPtr mBufferAdapter;
+
+    // audio format
+
+    QAudioFormatPtr mAudioFormat;
 
     // size of window in samples
 

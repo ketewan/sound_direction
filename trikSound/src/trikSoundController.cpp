@@ -63,6 +63,7 @@ TrikSoundController::TrikSoundController(const Settings& args,
     mAngleDetector = initializer.getAngleDetector();
     mVad = initializer.getVadWrapper();
     mPipe = initializer.getAudioPipe();
+    mAudioFormat = initializer.getQAudioFormat();
 
     connect(mAudioStream.get(), SIGNAL(finished()), this, SLOT(finish()), Qt::QueuedConnection);
 

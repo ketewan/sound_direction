@@ -88,8 +88,10 @@ int SingleChannelCircularBuffer::channelCount() const
 void SingleChannelCircularBuffer::swap(SingleChannelCircularBuffer& other)
 {
     std::swap(mBuffer, other.mBuffer);
-    std::swap(mReadItr, other.mReadItr);
-    std::swap(mWriteItr, other.mWriteItr);
+    mReadItr = mBuffer.begin();
+    mWriteItr = back_inserter(mBuffer);
+    //std::swap(mReadItr, other.mReadItr);
+    //std::swap(mWriteItr, other.mWriteItr);
 }
 
 }

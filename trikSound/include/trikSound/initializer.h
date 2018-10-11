@@ -164,12 +164,42 @@ typename Initializer<Iter>::VadFilterWrapperPtr Initializer<Iter>::getVadWrapper
     return mVadWrapper;
 }
 
+template <typename T>
+std::shared_ptr<T> my_make_shared(std::string const & comment) {
+    std::shared_ptr<T> r(new T(), [=](T * p) { std::cerr << comment;} );
+    return r;
+}
+
+template <typename T, typename A>
+std::shared_ptr<T> my_make_shared(A const &a, std::string const & comment) {
+    std::shared_ptr<T> r(new T(a), [=](T * p) { std::cerr << comment;} );
+    return r;
+}
+
+template <typename T, typename A, typename B>
+std::shared_ptr<T> my_make_shared(A const &a, B const &b, std::string const & comment) {
+    std::shared_ptr<T> r(new T(a, b), [=](T * p) { std::cerr << comment;} );
+    return r;
+}
+
+template <typename T, typename A, typename B, typename C>
+std::shared_ptr<T> my_make_shared(A const &a, B const &b, C const &c, std::string const & comment) {
+    std::shared_ptr<T> r(new T(a, b, c), [=](T * p) { std::cerr << comment;} );
+    return r;
+}
+
+
+template <typename T, typename A, typename B, typename C, typename D>
+std::shared_ptr<T> my_make_shared(A const &a, B const &b, C const &c, D const &d, std::string const & comment) {
+    std::shared_ptr<T> r(new T(a, b, c, d), [=](T * p) { std::cerr << comment;} );
+    return r;
+}
 
 template <typename Iter>
 void Initializer<Iter>::createQAudioFormat(const Settings& settings)
 {
     if (!mAudioFormat) {
-        mAudioFormat = std::make_shared<QAudioFormat>();
+        mAudioFormat = my_make_shared<QAudioFormat>("deleted mAudioFormat");
         mAudioFormat->setSampleRate(settings.sampleRate());
         mAudioFormat->setSampleSize(settings.sampleSize());
         mAudioFormat->setSampleType(settings.sampleType());
@@ -192,12 +222,16 @@ void Initializer<Iter>::createCircularBuffer(const Settings& settings)
     if (!mCircularBuffer) {
         std::shared_ptr<CircularBuffer> buffer;
         if (settings.singleChannelFlag()) {
-            buffer = std::make_shared<SingleChannelCircularBuffer>(BUFFER_CAPACITY * settings.windowSize());
+            buffer = my_make_shared<SingleChannelCircularBuffer>(BUFFER_CAPACITY * settings.windowSize(),
+                                                                 "deleted single channel buffer");
         }
         else {
-            buffer = std::make_shared<DoubleChannelCircularBuffer>(BUFFER_CAPACITY * settings.windowSize());
+            buffer = my_make_shared<DoubleChannelCircularBuffer>(BUFFER_CAPACITY * settings.windowSize(),
+                                                                 "deleted double channel buffer");
         }
-        mCircularBuffer = std::make_shared<CircularBufferQAdapter>(buffer);
+        mCircularBuffer = my_make_shared<CircularBufferQAdapter>(buffer, "deleted mCircularBuffer");
+        //mCircularBuffer = std::shared_ptr<CircularBufferQAdapter>(new CircularBufferQAdapter(buffer),
+        //                                [](CircularBufferQAdapter* p){std::cout << "deleted";});
         mCircularBuffer->open(QIODevice::ReadWrite);
     }
 }
@@ -206,17 +240,19 @@ template <typename Iter>
 void Initializer<Iter>::createAudioDeviceManager(const Settings& settings)
 {
     if (!mDeviceManager) {
-        createQAudioFormat(settings);
-        createCircularBuffer(settings);
+//        createQAudioFormat(settings);
+//        createCircularBuffer(settings);
 
         QAudioDeviceInfo dev = QAudioDeviceInfo::defaultInputDevice();
 #ifdef TRIK
-        mDeviceManager = std::make_shared<TrikAudioDeviceManager>(dev,
-                                                                  *mAudioFormat.get(),
-                                                                  mCircularBuffer,
-                                                                  settings.audioDeviceInitFlag());
+        mDeviceManager = my_make_shared<TrikAudioDeviceManager>(dev,
+                                                                *mAudioFormat.get(),
+                                                                mCircularBuffer,
+                                                                settings.audioDeviceInitFlag(),
+                                                                "deleted trik mDeviceManager");
 #else
-        mDeviceManager = std::make_shared<AudioDeviceManager>(dev, *mAudioFormat.get(), mCircularBuffer);
+        mDeviceManager = my_make_shared<AudioDeviceManager>(dev, *mAudioFormat.get(), mCircularBuffer,
+                                                            "deleted mDeviceManager");
 #endif
 
 
@@ -227,21 +263,24 @@ template <typename Iter>
 void Initializer<Iter>::createAudioStream(const Settings& settings)
 {
     if (!mAudioStream) {
-        createQAudioFormat(settings);
-        createAudioDeviceManager(settings);
-        createCircularBuffer(settings);
+//        createQAudioFormat(settings);
+//        createAudioDeviceManager(settings);
+//        createCircularBuffer(settings);
 
         QAudioFormat& fmt = *mAudioFormat.get();
+
         size_t windowSize = settings.windowSize();
 
         if (settings.fileInputFlag()) {
-            mAudioStream = std::make_shared<FileAudioStream>(settings.inputWavFilename(),
-                                                             windowSize * fmt.channelCount());
+            mAudioStream = my_make_shared<FileAudioStream>(settings.inputWavFilename(),
+                                                           windowSize * fmt.channelCount(),
+                                                           "deleted mAudioStream");
         }
         else {
-            mAudioStream = std::make_shared<CaptureAudioStream>(mDeviceManager,
-                                                                mCircularBuffer,
-                                                                windowSize * fmt.channelCount());
+            mAudioStream = my_make_shared<CaptureAudioStream>(mDeviceManager,
+                                                              mCircularBuffer,
+                                                              windowSize * fmt.channelCount(),
+                                                              "deleted mAudioStream");
         }
     }
 }
@@ -250,13 +289,13 @@ template <typename Iter>
 void Initializer<Iter>::createAudioPipe(const Settings& settings)
 {
     if (!mAudioPipe) {
-        createQAudioFormat(settings);
+//        createQAudioFormat(settings);
 
-        mAudioPipe = std::make_shared<StereoAudioPipe<Iter>>();
-        auto monoPipe = std::make_shared<AudioPipe<Iter>>();
+        mAudioPipe = my_make_shared<StereoAudioPipe<Iter>>("deleted mAudioPipe");
+        auto monoPipe = my_make_shared<AudioPipe<Iter>>("deleted monoPipe");
 
         if (settings.filteringFlag()) {
-            FilterPtr filter = std::make_shared<DigitalAudioFilter<Iter>>();
+            FilterPtr filter = my_make_shared<DigitalAudioFilter<Iter>>("deleted filter");
             monoPipe->insertFilter(monoPipe->end(), filter);
         }
 
@@ -267,9 +306,9 @@ void Initializer<Iter>::createAudioPipe(const Settings& settings)
         }
 
         if (settings.singleChannelFlag() && settings.recordStreamFlag()) {
-            auto wavFile = std::make_shared<WavFile>(settings.outputWavFilename());
+            auto wavFile = my_make_shared<WavFile>(settings.outputWavFilename(), "deleted wavFile");
             wavFile->open(WavFile::WriteOnly, *mAudioFormat.get());
-            FilterPtr record = std::make_shared<RecordFilter<Iter>>(wavFile);
+            FilterPtr record = my_make_shared<RecordFilter<Iter>>(wavFile, "deleted record");
             monoPipe->insertFilter(monoPipe->end(), record);
         }
 
@@ -280,21 +319,21 @@ void Initializer<Iter>::createAudioPipe(const Settings& settings)
         }
 
         if (settings.angleDetectionFlag()) {
-            createAngleDetector(settings);
+            //createAngleDetector(settings);
             mAudioPipe->insertFilter(mAudioPipe->end(),
                                      std::static_pointer_cast<StereoAudioFilter<Iter>>(mAngleDetector));
         }
 
 
         if (!settings.singleChannelFlag() && settings.recordStreamFlag()) {
-            auto wavFile = std::make_shared<WavFile>(settings.outputWavFilename());
+            auto wavFile = my_make_shared<WavFile>(settings.outputWavFilename(), "deleted wavFile");
             wavFile->open(WavFile::WriteOnly, *mAudioFormat.get());
-            StereoFilterPtr record = std::make_shared<StereoRecordFilter<Iter>>(wavFile);
+            StereoFilterPtr record = my_make_shared<StereoRecordFilter<Iter>>(wavFile, "deleted record");
             mAudioPipe->insertFilter(mAudioPipe->end(), record);
         }
 
 
-        StereoFilterPtr split = std::make_shared<SplitFilter<Iter>>(monoPipe);
+        StereoFilterPtr split = my_make_shared<SplitFilter<Iter>>(monoPipe, "deleted split");
         mAudioPipe->insertFilter(mAudioPipe->begin(), split);
     }
 }
@@ -310,9 +349,10 @@ void Initializer<Iter>::createAngleDetector(const Settings& settings)
             throw InitException("Initialization error."
                                 "Angle detection enabled with single audio channel");
         }
-        mAngleDetector = std::make_shared<AngleDetector<Iter>>(settings.sampleRate(),
-                                                               settings.micrDist(),
-                                                               settings.angleDetectionHistoryDepth());
+        mAngleDetector = my_make_shared<AngleDetector<Iter>>(settings.sampleRate(),
+                                                             settings.micrDist(),
+                                                             settings.angleDetectionHistoryDepth(),
+                                                             "deleted mAngleDetector");
     }
 }
 
@@ -321,12 +361,12 @@ void Initializer<Iter>::createVadWrapper(const Settings& settings)
 {
     if (!mVadWrapper) {
         if (settings.singleChannelFlag()) {
-            auto vad = std::make_shared<VadFilter<Iter>>(settings.vadThreshold());
-            mVadWrapper = std::make_shared<VadFilterWrapper<Iter>>(vad);
+            auto vad = my_make_shared<VadFilter<Iter>>(settings.vadThreshold(), "deleted vad");
+            mVadWrapper = my_make_shared<VadFilterWrapper<Iter>>(vad, "deleted mVadWrapper");
         }
         else {
-            auto vad = std::make_shared<StereoVadFilter<Iter>>(settings.vadThreshold());
-            mVadWrapper = std::make_shared<VadFilterWrapper<Iter>>(vad);
+            auto vad = my_make_shared<StereoVadFilter<Iter>>(settings.vadThreshold(), "deleted vad");
+            mVadWrapper = my_make_shared<VadFilterWrapper<Iter>>(vad, "deleted mVadWrapper");
         }
     }
 }
