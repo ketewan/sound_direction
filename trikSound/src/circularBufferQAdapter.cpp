@@ -181,6 +181,11 @@ qint64 CircularBufferQAdapter::writeData(const char *data, qint64 len)
 
     mBuffer->write(sampleData, sampleCount);
 
-    emit readyRead();
-    return sampleCount * sizeof(sample_type);
+	QMetaObject::invokeMethod(this, "emitReadyRead", Qt::QueuedConnection);
+	return sampleCount * sizeof(sample_type);
+}
+
+void CircularBufferQAdapter::emitReadyRead()
+{
+	emit readyRead();
 }
