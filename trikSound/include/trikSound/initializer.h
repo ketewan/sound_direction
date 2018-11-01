@@ -217,10 +217,11 @@ void Initializer<Iter>::createQAudioFormat(const Settings& settings)
 }
 
 template <typename Iter>
+
 void Initializer<Iter>::createCircularBuffer(const Settings& settings)
 {
     if (!mCircularBuffer) {
-        std::shared_ptr<CircularBuffer> buffer;
+        std::shared_ptr<ICircularBuffer> buffer;
         if (settings.singleChannelFlag()) {
             buffer = my_make_shared<SingleChannelCircularBuffer>(BUFFER_CAPACITY * settings.windowSize(),
                                                                  "deleted single channel buffer");
@@ -240,8 +241,8 @@ template <typename Iter>
 void Initializer<Iter>::createAudioDeviceManager(const Settings& settings)
 {
     if (!mDeviceManager) {
-//        createQAudioFormat(settings);
-//        createCircularBuffer(settings);
+        createQAudioFormat(settings);
+        createCircularBuffer(settings);
 
         QAudioDeviceInfo dev = QAudioDeviceInfo::defaultInputDevice();
 #ifdef TRIK
@@ -263,9 +264,9 @@ template <typename Iter>
 void Initializer<Iter>::createAudioStream(const Settings& settings)
 {
     if (!mAudioStream) {
-//        createQAudioFormat(settings);
-//        createAudioDeviceManager(settings);
-//        createCircularBuffer(settings);
+        createQAudioFormat(settings);
+        createAudioDeviceManager(settings);
+        createCircularBuffer(settings);
 
         QAudioFormat& fmt = *mAudioFormat.get();
 
@@ -289,7 +290,7 @@ template <typename Iter>
 void Initializer<Iter>::createAudioPipe(const Settings& settings)
 {
     if (!mAudioPipe) {
-//        createQAudioFormat(settings);
+        createQAudioFormat(settings);
 
         mAudioPipe = my_make_shared<StereoAudioPipe<Iter>>("deleted mAudioPipe");
         auto monoPipe = my_make_shared<AudioPipe<Iter>>("deleted monoPipe");

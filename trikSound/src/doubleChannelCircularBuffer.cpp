@@ -33,9 +33,9 @@ DoubleChannelCircularBuffer::DoubleChannelCircularBuffer(size_t capacity):
   , mRightWriteItr(back_inserter(mRightBuffer))
 {}
 
-void DoubleChannelCircularBuffer::read(trikSound::sample_type* buf, size_t size)
+quint64 DoubleChannelCircularBuffer::read(trikSound::sample_type* buf, size_t size)
 {
-    size_t halfSize = size / 2;
+    size_t halfSize = std::min(size / 2, samplesAvailable() / 2);
     auto leftReadEnd = mLeftReadItr + halfSize;
     auto rightReadEnd = mRightReadItr + halfSize;
 
@@ -48,10 +48,7 @@ void DoubleChannelCircularBuffer::read(trikSound::sample_type* buf, size_t size)
         --mLeftReadItr;
         --mRightReadItr;
     }
-//    else {
-//        mLeftReadItr = mLeftBuffer.begin();
-//        mRightReadItr = mRightBuffer.begin();
-//    }
+    return halfSize * 2;
 }
 
 void DoubleChannelCircularBuffer::write(const sample_type* buf, size_t size)
@@ -90,12 +87,16 @@ size_t DoubleChannelCircularBuffer::samplesAvailable() const
 
 void DoubleChannelCircularBuffer::resize(size_t size)
 {
-    DoubleChannelCircularBuffer(size).swap(*this);
+    mLeftBuffer.set_capacity(size / 2);
+    mRightBuffer.set_capacity(size / 2);
+    resetIterators();
 }
 
 void DoubleChannelCircularBuffer::clear()
-{
-    DoubleChannelCircularBuffer(mLeftBuffer.capacity()).swap(*this);
+{   
+    mLeftBuffer.clear();
+    mRightBuffer.clear();
+    resetIterators();
 }
 
 int DoubleChannelCircularBuffer::channelCount() const
@@ -107,10 +108,15 @@ void DoubleChannelCircularBuffer::swap(DoubleChannelCircularBuffer& other)
 {
     std::swap(mLeftBuffer, other.mLeftBuffer);
     std::swap(mRightBuffer, other.mRightBuffer);
-    std::swap(mLeftReadItr, other.mLeftReadItr);
-    std::swap(mLeftWriteItr, other.mLeftWriteItr);
-    std::swap(mRightReadItr, other.mRightReadItr);
-    std::swap(mRightWriteItr, other.mRightWriteItr);
+    resetIterators();
+    other.resetIterators();
+}
+
+void DoubleChannelCircularBuffer::resetIterators() {
+    mLeftReadItr = mLeftBuffer.begin();
+    mRightReadItr = mRightBuffer.begin();
+    mLeftWriteItr = back_inserter(mLeftBuffer);
+    mRightWriteItr = back_inserter(mRightBuffer);
 }
 
 }

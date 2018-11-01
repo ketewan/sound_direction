@@ -63,7 +63,6 @@ HEADERS += \
     include/trikSound/stereoRecordFilter.h \
     include/trikSound/recordFilter.h \
     include/trikSound/audioPipe.h \
-    include/trikSound/circularBuffer.h \
     include/trikSound/doubleChannelCircularBuffer.h \
     include/trikSound/singleChannelCircularBuffer.h \
     include/trikSound/audioStream.h \
@@ -74,5 +73,6 @@ HEADERS += \
     include/trikSound/vadFilter.h \
     include/internal/vadFilterImpl.h \
     include/trikSound/stereoVadFilter.h \
-    include/trikSound/vadFilterWrapper.h
+    include/trikSound/vadFilterWrapper.h \
+    include/trikSound/iCircularBuffer.h
 

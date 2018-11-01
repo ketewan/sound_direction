@@ -21,7 +21,7 @@
 
 #include "triksound_global.h"
 #include "types.h"
-#include "circularBuffer.h"
+#include "iCircularBuffer.h"
 
 namespace trikSound {
 
@@ -44,7 +44,7 @@ class TRIKSOUNDSHARED_EXPORT CircularBufferQAdapter : public QIODevice
     Q_OBJECT
 public:
 
-    typedef std::shared_ptr<CircularBuffer> CircularBufferPtr;
+    typedef std::shared_ptr<ICircularBuffer> CircularBufferPtr;
 
     CircularBufferQAdapter(const CircularBufferPtr& cb, QObject *parent = 0);
 

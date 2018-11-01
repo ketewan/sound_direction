@@ -16,18 +16,18 @@
 
 #include <boost/circular_buffer.hpp>
 
-#include "circularBuffer.h"
+#include "iCircularBuffer.h"
 
 namespace trikSound
 {
 
-class DoubleChannelCircularBuffer: public CircularBuffer
+class DoubleChannelCircularBuffer: public ICircularBuffer
 {
 public:
 
     explicit DoubleChannelCircularBuffer(size_t capacity);
 
-    void read(sample_type* buf, size_t size);
+    quint64 read(sample_type* buf, size_t size);
     void write(const sample_type* buf, size_t size);
 
     size_t size() const;
@@ -55,6 +55,7 @@ private:
     WriteIterator       mLeftWriteItr;
     WriteIterator       mRightWriteItr;
 
+    void resetIterators();
 };
 
 }

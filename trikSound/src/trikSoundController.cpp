@@ -168,6 +168,7 @@ void TrikSoundController::restart()
     // in case of changes in windowSize
     mBufferAdapter->resize(Initializer<BufferIterator>::BUFFER_CAPACITY * mWindowSize);
     run();
+    qDebug() << "after run";
 }
 
 void TrikSoundController::stop()

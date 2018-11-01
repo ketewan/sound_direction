@@ -59,13 +59,16 @@ void ControlFifo::readData()
 
     NotificationGuard guard(&mNotifier);
     if (fgets(mCmdBuffer, CMD_BUFFER_SIZE, mFile) != nullptr) {
+        qDebug() << "before readComand";
         readCommand();
+        qDebug() << "after readCommand";
         fill(mCmdBuffer, end(mCmdBuffer), 0);
     }
 }
 
 void ControlFifo::readCommand()
 {
+    qDebug() << "readCommand";
     QString qstr(mCmdBuffer);
     QTextStream in(&qstr, QIODevice::ReadOnly);
 

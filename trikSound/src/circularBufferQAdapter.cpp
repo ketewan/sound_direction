@@ -69,7 +69,7 @@ void CircularBufferQAdapter::close()
 
 qint64 CircularBufferQAdapter::size() const
 {
-    return mBuffer->size    () * sizeof(sample_type);
+    return mBuffer->size() * sizeof(sample_type);
 }
 
 
@@ -149,9 +149,9 @@ qint64 CircularBufferQAdapter::readData(char* data, qint64 maxlen)
         return -1;
     }
 
-    mBuffer->read(sampleData, sampleCount);
+    auto samplesRead = mBuffer->read(sampleData, sampleCount);
 
-    return sampleCount * sizeof(sample_type);
+    return samplesRead * sizeof(sample_type);
 }
 
 qint64 CircularBufferQAdapter::readLineData(char* data, qint64 maxlen)

@@ -91,7 +91,7 @@ private:
     typedef std::vector<sample_type>    WindowContainer;
     typedef WindowContainer::iterator   BufferIterator;
 
-    typedef std::shared_ptr<CircularBuffer>                             CircularBufferPtr;
+    typedef std::shared_ptr<ICircularBuffer>                             CircularBufferPtr;
     typedef std::shared_ptr<CircularBufferQAdapter>                     CircularBufferQAdapterPtr;
 
     typedef std::shared_ptr<AngleDetector<BufferIterator>>              AngleDetectorPtr;

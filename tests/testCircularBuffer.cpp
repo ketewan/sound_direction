@@ -8,7 +8,7 @@
 #include <random>
 #include <algorithm>
 
-#include "trikSound/circularBuffer.h"
+#include "trikSound/iCircularBuffer.h"
 #include "trikSound/singleChannelCircularBuffer.h"
 #include "trikSound/doubleChannelCircularBuffer.h"
 #include "trikSound/circularBufferQAdapter.h"
@@ -30,8 +30,8 @@ protected:
 
     test_array randBytes;
     test_array readBytes;
-    std::shared_ptr<CircularBuffer> cbSingle;
-    std::shared_ptr<CircularBuffer> cbDouble;
+    std::shared_ptr<ICircularBuffer> cbSingle;
+    std::shared_ptr<ICircularBuffer> cbDouble;
     CircularBufferQAdapter cb;
 };
 

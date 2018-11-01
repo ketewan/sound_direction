@@ -19,13 +19,13 @@
 namespace trikSound
 {
 
-class CircularBuffer
+class ICircularBuffer
 {
 public:
 
-    virtual ~CircularBuffer() {}
+    virtual ~ICircularBuffer() {}
 
-    virtual void read(sample_type* buf, size_t size) = 0;
+    virtual quint64 read(sample_type* buf, size_t size) = 0;
     virtual void write(const sample_type* buf, size_t size) = 0;
 
     virtual size_t size() const = 0;
